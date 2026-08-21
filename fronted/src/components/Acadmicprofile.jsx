@@ -40,7 +40,7 @@ const socialProfiles = [
   },
   {
     name: "YouTube",
-    url: "https://www.youtube.com/watch?v=UEZm0U6KrfY&list=RDSQ4jZ-EAL88&index=2",
+    url: "https://www.youtube.com",
     icon: Youtube,
   },
   {
