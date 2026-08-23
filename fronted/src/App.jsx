@@ -1,16 +1,17 @@
 import './App.css'
 import Navbar from './components/Navbar'
 import Home from './components/Home'
-import AcademicProfiles from './components/Acadmicprofile'
+import AcademicJourney from './components/AcadnicJourney'
+import { Routes, Route } from "react-router-dom";
 function App() {
 
   return (
     <>
      <Navbar/>
-     <main>
-      <Home/>
-      <AcademicProfiles/>
-     </main>
+     <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/about/academic-journey" element={<AcademicJourney/>}/>
+     </Routes>
     </>
   )
 }

@@ -1,4 +1,5 @@
 import profimage from "../assets/profimage.png";
+import AcademicProfiles from './Acadmicprofile'
 
 function Home() {
   return (
@@ -170,6 +171,7 @@ function Home() {
     </div>
     </div>
     </section>
+    <AcademicProfiles/>
     </main>
   );
 }

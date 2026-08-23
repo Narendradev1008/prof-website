@@ -7,10 +7,10 @@ const navItems = [
   {
     label: "About",
     dropdown: [
-      { label: "Biography", href: "/about#biography" },
-      { label: "Academic Journey", href: "/about#academic-journey" },
-      { label: "Teaching Philosophy", href: "/about#teaching-philosophy" },
-      { label: "Honours & Awards", href: "/about#honours-awards" },
+      { label: "Biography", href: "/about/biography" },
+      { label: "Academic Journey", href: "/about/academic-journey" },
+      { label: "Teaching Philosophy", href: "/about/teaching-philosophy" },
+      { label: "Honours & Awards", href: "/about/honours-awards" },
     ],
   },
 
