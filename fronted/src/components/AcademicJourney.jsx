@@ -1,4 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useStatistics } from "../hooks/useStatistics";
+import MetricCard from "./ui/MetricCard";
+import PageHero from "./ui/PageHero";
+import LabSectionHeading from "./ui/SectionHeading";
 
 const education = [
   {
@@ -112,97 +117,88 @@ const researchAreas = [
 
 function AcademicJourney() {
   const [showAbstract, setShowAbstract] = useState(false);
+  const statistics = useStatistics();
 
   return (
-    <main className="bg-slate-50 text-slate-900">
-
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-teal-900 px-6 py-24 text-white">
-        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-teal-400/10 blur-3xl" />
-        <div className="absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-blue-400/10 blur-3xl" />
-
-        <div className="relative mx-auto max-w-6xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-teal-300">
-            Academic Journey
-          </p>
-
-          <h1 className="max-w-4xl text-4xl font-bold tracking-tight md:text-6xl">
-            A Journey of Learning,
-            <span className="block text-blue-200">
-              Teaching & Research
-            </span>
-          </h1>
-
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-            Academic qualifications, professional experience, teaching
-            contributions and research interests of Prof. Mahmadasrasf A. Mulla.
-          </p>
+    <main className="site-shell" id="main-content">
+      <PageHero
+        eyebrow="Academic journey"
+        title={<>A journey of learning, teaching &amp; <em>research.</em></>}
+        description="Academic qualifications, professional experience, teaching contributions and research interests of Prof. Mahmadasraf A. Mulla."
+      >
+        <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+          {statistics.map((statistic) => (
+            <MetricCard key={statistic.key} label={statistic.label} value={statistic.value} />
+          ))}
         </div>
-      </section>
+      </PageHero>
 
-      {/* Academic Stats */}
-      <section className="px-6 py-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Courses taught during teaching career */}
+      <section className="lab-section lab-section--mist">
+        <div className="lab-container">
+          <LabSectionHeading
+            eyebrow="Teaching"
+            title="Courses Taught"
+            description="Core electrical engineering subjects taught throughout the academic career."
+          />
 
-            <StatCard number="28" label="Years of Teaching Experience" />
-            <StatCard number="100" label="Total Publications" />
-            <StatCard number="5" label="Core Teaching Areas" />
-            <StatCard number="1" label="Granted Indian Patent" />
-
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {teachingSubjects.map((subject, index) => (
+              <div key={subject} className="lab-surface flex items-center gap-4 p-4 shadow-none">
+                <span className="text-sm font-bold text-teal-700">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="font-semibold text-slate-800">{subject}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Education */}
-      <section className="bg-white px-6 py-20">
-        <div className="mx-auto max-w-6xl">
+      {/* Teaching Career */}
+      <section className="lab-section bg-white">
+        <div className="lab-container">
 
-          <SectionHeading
-            eyebrow="Education"
-            title="Academic Qualifications"
-            description="A progression from school education to advanced studies and doctoral research in electrical engineering."
+          <LabSectionHeading
+            eyebrow="Professional Experience"
+            title="Teaching Career"
+            description="28 years of teaching experience in electrical engineering at SVNIT Surat."
           />
 
-          <div className="relative mt-14">
+          <div className="lab-timeline mt-10 grid gap-5">
 
-            <div className="absolute left-[15px] top-0 hidden h-full w-px bg-gradient-to-b from-blue-400 via-teal-400 to-slate-200 md:block" />
+            {[...career].reverse().map((item) => (
+              <CareerCard
+                key={`${item.period}-${item.role}`}
+                item={item}
+              />
+            ))}
 
-            <div className="space-y-10">
-
-              {education.map((item) => (
-                <EducationCard
-                  key={`${item.period}-${item.title}`}
-                  item={item}
-                />
-              ))}
-
-            </div>
           </div>
         </div>
       </section>
 
       {/* PhD Research */}
-      <section className="bg-gradient-to-br from-blue-50 to-teal-50 px-6 py-20">
-        <div className="mx-auto max-w-6xl">
+      <section className="lab-section lab-section--mist">
+        <div className="lab-container">
 
-          <SectionHeading
+          <LabSectionHeading
             eyebrow="Doctoral Research"
             title="Ph.D. Research"
             description="Research focused on power quality improvement and advanced control of hybrid active power filters."
           />
 
-          <div className="mt-10 overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-sm">
+          <div className="lab-surface mt-10 overflow-hidden">
 
-            <div className="h-2 bg-gradient-to-r from-blue-600 to-teal-500" />
+            <div className="h-1.5 bg-gradient-to-r from-teal-400 via-cyan-300 to-amber-300" />
 
             <div className="p-8 md:p-10">
 
-              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-teal-700">
                 2010 – 2014
               </p>
 
-              <h3 className="mt-3 text-2xl font-bold text-slate-900 md:text-3xl">
+              <h3 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
                 Studies on Control Algorithms for Series Hybrid Active Power Filter
               </h3>
 
@@ -226,15 +222,11 @@ function AcademicJourney() {
 
               <div className="mt-10 border-t border-slate-200 pt-8">
 
-                <h4 className="text-xl font-bold text-slate-900">
+                <h4 className="text-xl font-bold tracking-tight text-slate-900">
                   Research Abstract
                 </h4>
 
                 <div className="mt-4 text-[15px] leading-8 text-slate-600">
-
-                  <p>
-                    
-                  </p>
 
                   <p className="mt-4">
                     This research work includes the study and experimental validation of series hybrid
@@ -242,7 +234,7 @@ active power filter (SHAPF) with a novel control algorithm, to compensate source
 harmonics and source voltage unbalances simultaneously. The control algorithm derives
 reference voltage for compensating source unbalance from the sequence components and a
 reference voltage for compensating harmonic compensation by decomposing source voltage
-vector into quantities that represent different components of poweINR In the proposed method,
+vector into quantities that represent different components of power. In the proposed method,
 the instantaneous power multivector is defined using generalised instantaneous power theory.
                   </p>
 
@@ -297,7 +289,7 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
 
                 <button
                   onClick={() => setShowAbstract(!showAbstract)}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#0a3858] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#0c4b6d]"
                 >
                   {showAbstract ? "Show Less" : "Read More"}
 
@@ -317,26 +309,43 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
 
               </div>
 
+              <div className="mt-10 border-t border-slate-200 pt-8">
+                <h4 className="text-xl font-bold tracking-tight text-slate-900">
+                  Areas of Research
+                </h4>
+
+                <div className="mt-5 flex flex-wrap gap-3">
+                  {researchAreas.map((area) => (
+                    <span
+                      key={area}
+                      className="rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-800"
+                    >
+                      {area}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
       </section>
 
-      {/* Teaching Career */}
-      <section className="bg-white px-6 py-20">
-        <div className="mx-auto max-w-6xl">
+      {/* Education */}
+      <section className="lab-section bg-white">
+        <div className="lab-container">
 
-          <SectionHeading
-            eyebrow="Professional Experience"
-            title="Teaching Career"
-            description="28 years of teaching experience in electrical engineering at SVNIT Surat."
+          <LabSectionHeading
+            eyebrow="Education"
+            title="Academic Qualifications"
+            description="A progression from school education to advanced studies and doctoral research in electrical engineering."
           />
 
-          <div className="mt-14 grid gap-5">
+          <div className="lab-timeline mt-10 space-y-7">
 
-            {career.map((item) => (
-              <CareerCard
-                key={`${item.period}-${item.role}`}
+              {[...education].reverse().map((item) => (
+                <EducationCard
+                key={`${item.period}-${item.title}`}
                 item={item}
               />
             ))}
@@ -345,74 +354,12 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
         </div>
       </section>
 
-      {/* Teaching + Research */}
-      <section className="bg-slate-50 px-6 py-20">
-
-        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2">
-
-          <div className="rounded-3xl border border-blue-100 bg-white p-8 shadow-sm md:p-10">
-
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Teaching
-            </p>
-
-            <h2 className="mt-3 text-3xl font-bold">
-              Courses Taught
-            </h2>
-
-            <div className="mt-8 space-y-3">
-
-              {teachingSubjects.map((subject, index) => (
-                <div
-                  key={subject}
-                  className="flex items-center gap-4 rounded-xl bg-blue-50/60 p-4 transition hover:bg-blue-100"
-                >
-                  <span className="text-sm font-semibold text-blue-500">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  <span className="font-medium text-slate-800">
-                    {subject}
-                  </span>
-                </div>
-              ))}
-
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-teal-100 bg-white p-8 shadow-sm md:p-10">
-
-            <p className="text-sm font-semibold uppercase tracking-wider text-teal-600">
-              Research
-            </p>
-
-            <h2 className="mt-3 text-3xl font-bold">
-              Areas of Research
-            </h2>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-
-              {researchAreas.map((area) => (
-                <span
-                  key={area}
-                  className="rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-sm text-teal-800"
-                >
-                  {area}
-                </span>
-              ))}
-
-            </div>
-          </div>
-
-        </div>
-      </section>
-
       {/* Publications & Patent */}
-      <section className="px-6 py-20">
+      <section className="lab-section lab-section--mist">
 
-        <div className="mx-auto max-w-6xl">
+        <div className="lab-container">
 
-          <SectionHeading
+          <LabSectionHeading
             eyebrow="Academic Highlights"
             title="Publications & Patent"
             description="A snapshot of major academic contributions."
@@ -420,9 +367,9 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
 
           <div className="mt-12 grid gap-6 md:grid-cols-2">
 
-            <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-8">
+            <div className="lab-surface p-8">
 
-              <p className="text-5xl font-bold text-blue-700">
+              <p className="text-5xl font-bold tracking-tight text-[#0a3858]">
                 100
               </p>
 
@@ -438,9 +385,9 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
 
             </div>
 
-            <div className="rounded-3xl border border-teal-100 bg-gradient-to-br from-teal-50 to-white p-8">
+            <div className="lab-surface p-8">
 
-              <p className="text-sm font-semibold uppercase tracking-wider text-teal-600">
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-teal-700">
                 Indian Patent
               </p>
 
@@ -464,11 +411,11 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
       </section>
 
       {/* Bottom CTA */}
-      <section className="bg-gradient-to-r from-slate-950 to-blue-950 px-6 py-20 text-white">
+      <section className="lab-section lab-section--dark">
 
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="lab-container max-w-4xl text-center">
 
-          <p className="text-sm font-semibold uppercase tracking-wider text-teal-300">
+          <p className="text-sm font-bold uppercase tracking-[0.18em] text-teal-700">
             Explore Further
           </p>
 
@@ -476,26 +423,20 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
             Discover the research and academic contributions
           </h2>
 
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
+          <p className="mx-auto mt-4 max-w-2xl text-slate-600">
             Explore publications, projects, thesis supervision, laboratories
             and other academic activities.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
 
-            <a
-              href="/research"
-              className="rounded-full bg-teal-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-400"
-            >
-              Explore Research
-            </a>
+            <Link to="/research/publications" className="lab-button">
+              Explore Publications
+            </Link>
 
-            <a
-              href="/activities"
-              className="rounded-full border border-slate-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
+            <Link to="/activities/organized" className="lab-button-secondary">
               Academic Activities
-            </a>
+            </Link>
 
           </div>
         </div>
@@ -506,61 +447,16 @@ passive filter, power multivector, series hybrid active power filter, voltage ve
 }
 
 
-/* -------------------------------- */
-/* Reusable Components               */
-/* -------------------------------- */
-
-function SectionHeading({ eyebrow, title, description }) {
-  return (
-    <div className="max-w-3xl">
-
-      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-        {eyebrow}
-      </p>
-
-      <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-        {title}
-      </h2>
-
-      <p className="mt-4 text-lg leading-8 text-slate-600">
-        {description}
-      </p>
-
-    </div>
-  );
-}
-
-
-function StatCard({ number, label }) {
-  return (
-    <div className="group rounded-2xl border border-blue-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-
-      <p className="text-4xl font-bold text-blue-700">
-        {number}
-      </p>
-
-      <p className="mt-2 text-sm text-slate-500">
-        {label}
-      </p>
-
-    </div>
-  );
-}
-
-
 function EducationCard({ item }) {
   return (
-    <div className="relative md:pl-12">
-
-      <div className="absolute left-[9px] top-6 hidden h-3 w-3 rounded-full bg-teal-500 ring-4 ring-teal-100 md:block" />
-
-      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-7 shadow-sm transition hover:border-blue-200 hover:shadow-md md:p-8">
+    <div className="lab-timeline-item">
+      <div className="lab-surface p-7 transition hover:-translate-y-0.5 hover:border-teal-300 md:p-8">
 
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
 
           <div>
 
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+            <p className="text-sm font-bold uppercase tracking-[0.14em] text-teal-700">
               {item.period}
             </p>
 
@@ -571,7 +467,7 @@ function EducationCard({ item }) {
           </div>
 
           {item.result && (
-            <span className="w-fit rounded-full bg-teal-100 px-4 py-2 text-sm font-semibold text-teal-800">
+            <span className="w-fit rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-bold text-teal-800">
               {item.result}
             </span>
           )}
@@ -598,11 +494,11 @@ function EducationCard({ item }) {
         {item.marks && (
           <div className="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white">
 
-            <div className="overflow-x-auto">
+            <div aria-label="Academic marks table" className="overflow-x-auto" role="region" tabIndex={0}>
 
               <table className="w-full min-w-[600px] text-left text-sm">
 
-                <thead className="bg-blue-50 text-blue-900">
+                <thead className="bg-[#e8f4f7] text-[#082640]">
                   <tr>
                     <th className="px-5 py-3 font-semibold">
                       Examination
@@ -640,7 +536,7 @@ function EducationCard({ item }) {
                         {row[1]}
                       </td>
 
-                      <td className="px-5 py-3 text-blue-700">
+                      <td className="px-5 py-3 text-[#0a3858]">
                         {row[2]}
                       </td>
 
@@ -658,9 +554,9 @@ function EducationCard({ item }) {
         )}
 
         {item.thesis && (
-          <div className="mt-5 rounded-xl border border-blue-100 bg-blue-50 p-4">
+          <div className="mt-5 rounded-xl border border-teal-100 bg-[#f0f9fa] p-4">
 
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-500">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-teal-700">
               Thesis / Project
             </p>
 
@@ -691,17 +587,17 @@ function EducationCard({ item }) {
 
 function CareerCard({ item }) {
   return (
-    <div className="grid gap-4 rounded-3xl border border-blue-100 bg-white p-7 shadow-sm transition hover:border-blue-200 hover:shadow-md md:grid-cols-[220px_1fr] md:p-8">
+    <div className="lab-timeline-item lab-surface grid gap-4 p-7 transition hover:-translate-y-0.5 hover:border-teal-300 md:grid-cols-[220px_1fr] md:p-8">
 
       <div>
-        <p className="text-sm font-semibold leading-6 text-blue-600">
+        <p className="text-sm font-bold leading-6 text-teal-700">
           {item.period}
         </p>
       </div>
 
       <div>
 
-        <h3 className="text-xl font-bold">
+        <h3 className="text-xl font-bold tracking-tight">
           {item.role}
         </h3>
 
@@ -721,9 +617,9 @@ function CareerCard({ item }) {
 
 function InfoBox({ title, text }) {
   return (
-    <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+    <div className="rounded-2xl border border-teal-100 bg-[#f0f9fa] p-5">
 
-      <p className="text-xs font-semibold uppercase tracking-wider text-blue-500">
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-teal-700">
         {title}
       </p>
 
@@ -738,7 +634,7 @@ function InfoBox({ title, text }) {
 
 function Highlight({ text }) {
   return (
-    <div className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm font-medium text-teal-800">
+    <div className="lab-tag rounded-xl px-4 py-3 text-sm">
       {text}
     </div>
   );

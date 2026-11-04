@@ -1,197 +1,278 @@
-import '../App.css' 
-import { useState } from "react";
-import { ChevronDown,X,Menu } from "lucide-react";
-
+import { ChevronDown, Menu, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
   {
     label: "About",
-    dropdown: [
-      { label: "Biography", href: "/about/biography" },
-      { label: "Academic Journey", href: "/about/academic-journey" },
-      { label: "Teaching Philosophy", href: "/about/teaching-philosophy" },
-      { label: "Honours & Awards", href: "/about/honours-awards" },
-    ],
+    dropdown: [{ label: "Academic Journey", to: "/about/academic-journey" }],
   },
-
   {
     label: "Research",
     dropdown: [
-      { label: "Research Areas", href: "/research#research-areas" },
-      { label: "Projects", href: "/research#projects" },
-      { label: "Grants & Consultancy", href: "/research#grants" },
-      { label: "Publications", href: "/research#publications" },
-      { label: "Thesis Supervision", href: "/research#thesis" },
+      { label: "Project-based Learning", to: "/research/project-based-learning" },
+      { label: "Project Grants/Consultancy Work", to: "/research/projects" },
+      { label: "Publications", to: "/research/publications" },
+      { label: "Thesis Supervision", to: "/research/thesis" },
     ],
   },
-
   {
     label: "Laboratories",
     dropdown: [
-      {
-        label: "Laboratory 1",
-        href: "/laboratories/lab-1",
-      },
-      {
-        label: "Laboratory 2",
-        href: "/laboratories/lab-2",
-      },
+      { label: "Industrial Power Electronics Lab (IPEC)", to: "/laboratories/ipec" },
+      { label: "Advanced Power Electronics Laboratory (APEL)", to: "/laboratories/apel" },
     ],
   },
-
   {
     label: "Academic Activities",
     dropdown: [
-      {
-        label: "Conferences & Workshops Organized",
-        href: "/activities#organized",
-      },
-      {
-        label: "Events Attended",
-        href: "/activities#attended",
-      },
-      {
-        label: "Expert Talks",
-        href: "/activities#expert-talks",
-      },
+      { label: "Conferences & Workshops Organized", to: "/activities/organized" },
+      { label: "Events Attended", to: "/activities/attended" },
+      { label: "Expert Talks", to: "/activities/expert-talks" },
     ],
   },
-
-  {
-    label: "Outreach",
-    href: "/outreach",
-  },
-
-  {
-    label: "Contact",
-    href: "/contact",
-  },
+  { label: "Outreach", to: "/outreach" },
+  { label: "Contact", to: "/#contact" },
 ];
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const mobileMenuButtonRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const closeMenus = () => {
+    setMenuOpen(false);
+    setOpenDropdown(null);
+  };
+
+  const isCurrentRoute = (to) => to !== "/#contact" && location.pathname === to;
+  const isDropdownCurrent = (item) => item.dropdown?.some((dropdownItem) => isCurrentRoute(dropdownItem.to));
+
+  const handleContactClick = (event) => {
+    event.preventDefault();
+    closeMenus();
+
+    if (location.pathname === "/") {
+      document.getElementById("contact")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      return;
+    }
+
+    navigate("/#contact");
+  };
+
+  const handleDropdownBlur = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setOpenDropdown(null);
+    }
+  };
+
+  const handleDropdownKeyDown = (event) => {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    setOpenDropdown(null);
+    event.currentTarget.querySelector("button")?.focus();
+  };
+
+  const closeMobileMenuWithFocus = () => {
+    setMenuOpen(false);
+    setOpenDropdown(null);
+    window.requestAnimationFrame(() => mobileMenuButtonRef.current?.focus());
+  };
+
+  const handleMobileMenuKeyDown = (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeMobileMenuWithFocus();
+    }
+  };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        
-        <a
-          href="/"
-          className="text-xl font-semibold tracking-tight text-gray-900 md:text-2xl"
+    <>
+      <a
+        className="sr-only fixed left-4 top-4 z-[60] rounded-lg bg-white px-4 py-2 text-sm font-bold text-slate-950 shadow-lg focus:not-sr-only"
+        href="#main-content"
+      >
+        Skip to main content
+      </a>
+      <nav
+        aria-label="Primary navigation"
+        className="sticky top-0 z-50 border-b border-cyan-200/15 bg-[#041527]/95 text-white shadow-[0_10px_30px_rgba(4,21,39,0.16)] backdrop-blur"
+      >
+        <div className="mx-auto flex max-w-[80rem] items-center justify-between gap-4 px-5 py-3.5 sm:px-6">
+        <Link
+          to="/"
+          className="min-w-0 font-['Space_Grotesk'] text-base font-bold tracking-tight text-white transition hover:text-cyan-200 sm:text-lg"
         >
           Dr. Mahmadasraf A. Mulla
-        </a>
+        </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-5 xl:flex">
           {navItems.map((item, index) => (
             <div key={item.label} className="relative">
               {item.dropdown ? (
                 <div
+                  onBlur={handleDropdownBlur}
+                  onKeyDown={handleDropdownKeyDown}
                   onMouseEnter={() => setOpenDropdown(index)}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
                   <button
-                    className="flex items-center gap-1 py-2 text-sm font-medium text-gray-700 transition hover:text-gray-900"
+                    aria-controls={`desktop-menu-${index}`}
+                    aria-expanded={openDropdown === index}
+                    aria-haspopup="true"
+                    className={`flex items-center gap-1 border-b-2 py-2 text-sm font-semibold transition ${
+                      isDropdownCurrent(item)
+                        ? "border-amber-300 text-white"
+                        : "border-transparent text-slate-300 hover:border-teal-300 hover:text-white"
+                    }`}
+                    onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
+                    type="button"
                   >
                     {item.label}
-                    <ChevronDown className="h-4 w-4" /> 
+                    <ChevronDown aria-hidden="true" className="h-3.5 w-3.5" />
                   </button>
-                  
+
                   {openDropdown === index && (
-                    <div className="absolute left-0 top-full w-64 pt-2">
-                      <div className="rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
+                    <div className="absolute left-0 top-full z-50 w-72 pt-3" id={`desktop-menu-${index}`}>
+                      <div className="overflow-hidden rounded-2xl border border-cyan-200/15 bg-[#082640] p-2 shadow-2xl shadow-slate-950/40">
                         {item.dropdown.map((dropdownItem) => (
-                          <a
+                          <Link
                             key={dropdownItem.label}
-                            href={dropdownItem.href}
-                            className="block rounded-lg px-4 py-3 text-sm text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
+                            to={dropdownItem.to}
+                            className={`block rounded-xl px-4 py-3 text-sm font-medium transition ${
+                              isCurrentRoute(dropdownItem.to)
+                                ? "bg-teal-300/15 text-teal-200"
+                                : "text-slate-200 hover:bg-white/10 hover:text-white"
+                            }`}
+                            onClick={closeMenus}
                           >
                             {dropdownItem.label}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <a
-                  href={item.href}
-                  className="py-2 text-sm font-medium text-gray-700 transition hover:text-gray-900"
+                <Link
+                  to={item.to}
+                  className={`border-b-2 py-2 text-sm font-semibold transition ${
+                    isCurrentRoute(item.to)
+                      ? "border-amber-300 text-white"
+                      : "border-transparent text-slate-300 hover:border-teal-300 hover:text-white"
+                  }`}
+                  onClick={item.label === "Contact" ? handleContactClick : closeMenus}
                 >
                   {item.label}
-                </a>
+                </Link>
               )}
             </div>
           ))}
+          <Link
+            to="/admin"
+            className="rounded-lg border border-teal-300/45 bg-teal-300/10 px-3.5 py-2 text-sm font-bold text-teal-100 transition hover:border-teal-200 hover:bg-teal-300/20"
+            onClick={closeMenus}
+          >
+            Admin login
+          </Link>
         </div>
-        {/* //mobile home page */}
-        <button
-          className="rounded-lg p-2 text-gray-700 md:hidden"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation"
-        >
-          {menuOpen ? (
-          <X />
-          ) : (
-          <Menu />
-          )}
-        </button>
-      </div>
 
-      {/* Mobile Navigation */}
-      {menuOpen && (
-        <div className="border-t border-gray-200 bg-white px-6 py-4 md:hidden">
-          <div className="flex flex-col">
+        <button
+          aria-controls="mobile-navigation"
+          aria-expanded={menuOpen}
+          aria-label="Toggle navigation"
+          className="rounded-lg border border-white/15 bg-white/5 p-2 text-cyan-100 transition hover:bg-white/10 xl:hidden"
+          onKeyDown={handleMobileMenuKeyDown}
+          onClick={() => {
+            setMenuOpen((currentMenuOpen) => !currentMenuOpen);
+            setOpenDropdown(null);
+          }}
+          ref={mobileMenuButtonRef}
+          type="button"
+        >
+          {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+        </button>
+        </div>
+
+        {menuOpen && (
+          <div
+            className="border-t border-white/10 bg-[#061b31] px-5 py-4 xl:hidden"
+            id="mobile-navigation"
+            onKeyDown={handleMobileMenuKeyDown}
+          >
+          <div className="mx-auto flex max-w-[80rem] flex-col">
             {navItems.map((item, index) => (
               <div key={item.label}>
                 {item.dropdown ? (
                   <>
                     <button
-                      className="flex w-full items-center justify-between py-3 text-left text-sm font-medium text-gray-800"
-                      onClick={() =>
-                        setOpenDropdown(
-                          openDropdown === index ? null : index
-                        )
-                      }
+                      aria-controls={`mobile-menu-${index}`}
+                      aria-expanded={openDropdown === index}
+                      className={`flex w-full items-center justify-between py-3 text-left text-sm font-semibold transition ${
+                        isDropdownCurrent(item) ? "text-teal-200" : "text-slate-100"
+                      }`}
+                      onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
+                      type="button"
                     >
                       {item.label}
-                      <ChevronDown className={`h-4 w-4 transition-transform ${
+                      <ChevronDown
+                        aria-hidden="true"
+                        className={`h-4 w-4 transition-transform ${
                           openDropdown === index ? "rotate-180" : ""
-                        }`} /> 
+                        }`}
+                      />
                     </button>
 
                     {openDropdown === index && (
-                      <div className="mb-2 ml-4 border-l border-gray-200 pl-4">
+                      <div className="mb-2 ml-3 border-l border-teal-300/30 pl-4" id={`mobile-menu-${index}`}>
                         {item.dropdown.map((dropdownItem) => (
-                          <a
+                          <Link
                             key={dropdownItem.label}
-                            href={dropdownItem.href}
-                            className="block py-2 text-sm text-gray-600 hover:text-gray-900"
-                            onClick={() => setMenuOpen(false)}
+                            to={dropdownItem.to}
+                            className={`block py-2.5 text-sm ${
+                              isCurrentRoute(dropdownItem.to) ? "text-teal-200" : "text-slate-300 hover:text-white"
+                            }`}
+                            onClick={closeMenus}
                           >
                             {dropdownItem.label}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     )}
                   </>
                 ) : (
-                  <a
-                    href={item.href}
-                    className="block py-3 text-sm font-medium text-gray-800"
-                    onClick={() => setMenuOpen(false)}
+                  <Link
+                    to={item.to}
+                    className={`block py-3 text-sm font-semibold ${
+                      isCurrentRoute(item.to) ? "text-teal-200" : "text-slate-100"
+                    }`}
+                    onClick={item.label === "Contact" ? handleContactClick : closeMenus}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 )}
               </div>
             ))}
+            <Link
+              to="/admin"
+              className="mt-3 rounded-lg border border-teal-300/45 bg-teal-300/10 px-4 py-3 text-center text-sm font-bold text-teal-100"
+              onClick={closeMenus}
+            >
+              Admin login
+            </Link>
           </div>
-        </div>
-      )}
-    </nav>
+          </div>
+        )}
+      </nav>
+    </>
   );
 }
+
 export default Navbar;
