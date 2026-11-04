@@ -48,6 +48,23 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
+      {!isAdminPage && (
+        <footer className="border-t border-slate-200 bg-white px-6 py-4 text-center text-xs text-slate-500">
+          <p className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+            <span>Developed by Narendra Darji</span>
+            <span aria-hidden="true">·</span>
+            <a
+              aria-label="Narendra Darji on LinkedIn"
+              className="font-medium text-teal-700 transition hover:text-teal-900"
+              href="https://www.linkedin.com/in/narendra-darji-9849ba2bb"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              LinkedIn: Narendra Darji
+            </a>
+          </p>
+        </footer>
+      )}
     </>
   );
 }
