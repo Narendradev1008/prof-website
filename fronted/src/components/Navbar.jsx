@@ -1,6 +1,7 @@
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useHomepageContent } from "../hooks/useHomepageContent";
 
 const navItems = [
   {
@@ -36,6 +37,7 @@ const navItems = [
 ];
 
 function Navbar() {
+  const homepageContent = useHomepageContent();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const mobileMenuButtonRef = useRef(null);
@@ -110,7 +112,7 @@ function Navbar() {
           to="/"
           className="min-w-0 font-['Space_Grotesk'] text-base font-bold tracking-tight text-white transition hover:text-cyan-200 sm:text-lg"
         >
-          Dr. Mahmadasraf A. Mulla
+          {homepageContent.name}
         </Link>
 
         <div className="hidden items-center gap-5 xl:flex">
