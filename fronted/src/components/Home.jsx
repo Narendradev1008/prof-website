@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import apelBench from "../assets/apel/apel-bench.jpg";
 import ipecBldcDrive from "../assets/ipec/ipec-bldc-drive.jpg";
+import { useHomepageContent } from "../hooks/useHomepageContent";
 import { useStatistics } from "../hooks/useStatistics";
 import AcademicProfiles from "./AcademicProfile";
 import MetricCard from "./ui/MetricCard";
@@ -36,6 +37,7 @@ function LaboratoryQuickLink({ abbreviation, alt, description, image, name, to }
 }
 
 function Home() {
+  const homepageContent = useHomepageContent();
   const statistics = useStatistics();
   const location = useLocation();
   const teachingExperience = statistics.find(
@@ -71,11 +73,11 @@ function Home() {
     <main className="site-shell" id="main-content">
       <PageHero
         className="home-hero"
-        description="Associate Professor · Department of Electrical Engineering · SVNIT Surat"
+        description={homepageContent.designation}
         eyebrow="Electrical Engineering · SVNIT Surat"
-        title="Dr. Mahmadasraf A. Mulla"
+        title={homepageContent.name}
       >
-        <p className="home-hero__research">Power Electronics <span>Research</span></p>
+        <p className="home-hero__research">{homepageContent.research}</p>
 
         <div className="lab-actions home-hero__actions">
           <Link className="lab-button" to="/about/academic-journey">

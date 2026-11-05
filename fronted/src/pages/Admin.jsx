@@ -4,6 +4,11 @@ import {
   getStatistics,
   updateStatistics,
 } from "../lib/statistics";
+import {
+  DEFAULT_HOMEPAGE_CONTENT,
+  getHomepageContent,
+  updateHomepageContent,
+} from "../lib/homepageContent";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import {
   getDocumentPdfUrl,
@@ -16,12 +21,15 @@ const ADMIN_EMAIL = "mam@eed.svnit.ac.in";
 function Admin() {
   const [session, setSession] = useState(null);
   const [statistics, setStatistics] = useState(DEFAULT_STATISTICS);
+  const [homepageContent, setHomepageContent] = useState(DEFAULT_HOMEPAGE_CONTENT);
   const [email, setEmail] = useState(ADMIN_EMAIL);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(isSupabaseConfigured);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavingHomepage, setIsSavingHomepage] = useState(false);
   const [uploadingDocument, setUploadingDocument] = useState(null);
   const [message, setMessage] = useState("");
+  const [homepageMessage, setHomepageMessage] = useState("");
   const [documentMessages, setDocumentMessages] = useState({});
 
   const isAdmin = session?.user?.email?.toLowerCase() === ADMIN_EMAIL;
@@ -53,15 +61,20 @@ function Admin() {
       return;
     }
 
-    const loadStatistics = async () => {
+    const loadContent = async () => {
       try {
-        setStatistics(await getStatistics());
+        const [nextStatistics, nextHomepageContent] = await Promise.all([
+          getStatistics(),
+          getHomepageContent(),
+        ]);
+        setStatistics(nextStatistics);
+        setHomepageContent(nextHomepageContent);
       } catch (error) {
-        setMessage(`Could not load statistics: ${error.message}`);
+        setMessage(`Could not load site content: ${error.message}`);
       }
     };
 
-    loadStatistics();
+    loadContent();
   }, [isAdmin]);
 
   const handleSignIn = async (event) => {
@@ -84,6 +97,31 @@ function Admin() {
         statistic.key === key ? { ...statistic, [field]: value } : statistic,
       ),
     );
+  };
+
+  const handleHomepageContentChange = (key, value) => {
+    setHomepageContent((currentContent) => ({ ...currentContent, [key]: value }));
+  };
+
+  const handleHomepageSave = async (event) => {
+    event.preventDefault();
+
+    if (Object.values(homepageContent).some((value) => !value.trim())) {
+      setHomepageMessage("Each homepage field is required.");
+      return;
+    }
+
+    setIsSavingHomepage(true);
+    setHomepageMessage("");
+
+    try {
+      await updateHomepageContent(homepageContent);
+      setHomepageMessage("Homepage content saved successfully.");
+    } catch (error) {
+      setHomepageMessage(`Could not save homepage content: ${error.message}`);
+    } finally {
+      setIsSavingHomepage(false);
+    }
   };
 
   const handleSave = async (event) => {
@@ -192,14 +230,29 @@ function Admin() {
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-teal-700">Administrator access</p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Manage site content</h1>
-          <p className="mt-2 text-slate-600">Update the public statistics and PDF documents from one place.</p>
+          <p className="mt-2 text-slate-600">Update the homepage, public statistics and PDF documents from one place.</p>
         </div>
         <button className="rounded-lg border border-teal-200 px-4 py-2 font-bold text-teal-800 transition hover:bg-teal-50" onClick={handleSignOut}>
           Sign out
         </button>
       </div>
 
+      <section className="mt-8 border-b border-teal-100 pb-8" aria-labelledby="homepage-content-heading">
+        <h2 className="text-xl font-bold text-slate-900" id="homepage-content-heading">Homepage hero</h2>
+        <p className="mt-1 text-sm leading-6 text-slate-600">Edit the three text elements shown at the top of the homepage.</p>
+        <form className="mt-6 space-y-4" onSubmit={handleHomepageSave}>
+          <Field label="Name" value={homepageContent.name} onChange={(value) => handleHomepageContentChange("name", value)} />
+          <Field label="Designation and department" multiline value={homepageContent.designation} onChange={(value) => handleHomepageContentChange("designation", value)} />
+          <Field label="Research focus" value={homepageContent.research} onChange={(value) => handleHomepageContentChange("research", value)} />
+          <button className="lab-button disabled:cursor-not-allowed disabled:opacity-60" disabled={isSavingHomepage} type="submit">
+            {isSavingHomepage ? "Saving..." : "Save homepage content"}
+          </button>
+        </form>
+        {homepageMessage && <Message text={homepageMessage} isError={homepageMessage.startsWith("Could not") || homepageMessage.startsWith("Each")} />}
+      </section>
+
       <form className="mt-8 space-y-4" onSubmit={handleSave}>
+        <h2 className="text-xl font-bold text-slate-900">Site statistics</h2>
         {statistics.map((statistic) => (
           <div className="grid gap-3 rounded-xl border border-slate-200 bg-[#f9fcfd] p-4 md:grid-cols-[160px_1fr]" key={statistic.key}>
             <Field label="Value" value={statistic.value} onChange={(value) => handleStatisticChange(statistic.key, "value", value)} />
@@ -289,17 +342,26 @@ function PageShell({ children }) {
   );
 }
 
-function Field({ label, type = "text", value, onChange }) {
+function Field({ label, multiline = false, type = "text", value, onChange }) {
   return (
     <label className="block text-sm font-medium text-slate-700">
       {label}
-      <input
-        className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-500 focus:ring-2"
-        onChange={(event) => onChange(event.target.value)}
-        required
-        type={type}
-        value={value}
-      />
+      {multiline ? (
+        <textarea
+          className="mt-1.5 min-h-24 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-500 focus:ring-2"
+          onChange={(event) => onChange(event.target.value)}
+          required
+          value={value}
+        />
+      ) : (
+        <input
+          className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-500 focus:ring-2"
+          onChange={(event) => onChange(event.target.value)}
+          required
+          type={type}
+          value={value}
+        />
+      )}
     </label>
   );
 }

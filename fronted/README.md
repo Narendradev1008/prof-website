@@ -12,7 +12,7 @@ Public visitor
 Administrator
   -> /admin
   -> Supabase email/password sign-in
-  -> update the six statistics or replace a fixed public PDF
+  -> update homepage text, six statistics, or replace a fixed public PDF
 ```
 
 ### Decisions behind the implementation
@@ -30,7 +30,13 @@ The site uses one research-lab design language across the public pages: dark nav
 
 ## Editable content
 
-The administrator can edit these six statistics at `/admin`:
+The administrator can edit these three homepage hero fields at `/admin`:
+
+1. Professor name
+2. Designation, department and institute
+3. Research focus
+
+The same page also allows editing these six statistics:
 
 1. Years of Teaching Experience
 2. Publications
@@ -86,7 +92,7 @@ fronted/
 Do these steps once for the Supabase project.
 
 1. Create a Supabase project.
-2. In **SQL Editor**, run the migrations in numeric order: `001_site_statistics.sql` through `007_project_based_learning_storage.sql`.
+2. In **SQL Editor**, run the migrations in numeric order: `001_site_statistics.sql` through `008_homepage_content.sql`.
 3. In **Authentication → Users**, create the administrator account for `mam@eed.svnit.ac.in`. Use a long, unique password and enable MFA if it is available.
 4. In **Connect / API**, copy the Project URL and publishable key.
 5. Copy `.env.example` to an uncommitted `.env.local` file:
@@ -103,7 +109,7 @@ Do these steps once for the Supabase project.
    npm run dev
    ```
 
-7. Open `/about/academic-journey` and verify the six cards load. Open `/admin`, sign in, change one statistic, save it, and refresh the public page.
+7. Open `/admin`, sign in, change a homepage field and a statistic, save each, and refresh the relevant public page.
 8. Upload one PDF in `/admin`, then verify the corresponding public page can display and download it.
 
 If the migrations have not been applied, statistics fall back to their built-in values and document uploads/viewing will not work against Supabase.
