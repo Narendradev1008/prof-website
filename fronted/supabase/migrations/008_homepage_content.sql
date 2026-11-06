@@ -6,9 +6,9 @@ create table if not exists public.homepage_content (
 
 insert into public.homepage_content (key, value)
 values
-  ('name', 'Dr. Mahmadasraf A. Mulla'),
-  ('designation', 'Associate Professor · Department of Electrical Engineering · SVNIT Surat'),
-  ('research', 'Power Electronics Research')
+  ('name', 'Mahmadasraf Mulla'),
+  ('designation', 'Professor · Department of Electrical Engineering · SVNIT Surat'),
+  ('research', 'Learning Power Electronics with hands-on-based experimentation')
 on conflict (key) do nothing;
 
 drop trigger if exists homepage_content_updated_at on public.homepage_content;
